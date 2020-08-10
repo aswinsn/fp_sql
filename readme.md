@@ -1,10 +1,10 @@
-fp_sql
+**fp_sql
 
 This repo contains a r script to read a fieldprime database file and convert to a CSV
 
 The script contains comments that requires user inputs, PLEASE read those comments
 
-Cloning this repo
+**Cloning this repo
 
 Open Rstudio
 
