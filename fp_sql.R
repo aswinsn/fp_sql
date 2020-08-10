@@ -1,9 +1,16 @@
+## Following packages are required 
+## Install them in console if you haven't already installed them before
+
 library(tidyverse)
 library(lubridate)
 library(RSQLite)
 
 sqlite.driver <- dbDriver("SQLite")
-db <- dbConnect(sqlite.driver, "fprime.fpdb")
+
+## read the fpdb files
+## Change path to the appropriate file in the line below
+
+db <- dbConnect(sqlite.driver, "data/fprime.fpdb")
 
 db_list_tables(db)
 
@@ -25,7 +32,9 @@ raw_dat <- dbReadTable(db, "datum")
 
 raw_dat <- raw_dat %>% 
   left_join(t_i_dat) %>% 
-  select(node_id, value, trait_name, timestamp, userid) 
+  select(node_id, value, trait_name, timestamp, userid)
+
+## Change tz below to appropriate timezone. Note Perth is different to other states 
 
 raw_dat$date_time <- as_datetime(as.numeric((raw_dat$timestamp)/1000), tz = "Australia/Perth")
 
@@ -47,4 +56,12 @@ raw_dat <- raw_dat %>%
   left_join(node) %>% 
   arrange(row, col, date_time)
 
-write_csv(raw_dat, "dion_data_set_3.csv", na = "")
+## Change output filename to whatever suits you
+## When you run it again make sure you change the name so that you are not overwriting
+
+write_csv(raw_dat, "output/fp_output.csv", na = "")
+
+## Clearing rstudio - optional!!
+
+rm(list = ls())
+cat("\014")
