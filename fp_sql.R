@@ -10,7 +10,7 @@ sqlite.driver <- dbDriver("SQLite")
 ## read the fpdb files
 ## Change path to the appropriate file in the line below
 
-db <- dbConnect(sqlite.driver, "data/fprime.fpdb")
+db <- dbConnect(sqlite.driver, "c:/Users/sin17m/Documents/Corrine/Backup tab 4 18082020")
 
 db_list_tables(db)
 
@@ -29,6 +29,10 @@ t_i_dat <- t_i_dat %>%
   left_join(trt_dat)
 
 raw_dat <- dbReadTable(db, "datum")
+
+unit_id <- raw_dat %>% 
+  distinct(node_id) %>% 
+  filter(node_id >= 10460)
 
 raw_dat <- raw_dat %>% 
   left_join(t_i_dat) %>% 
@@ -54,7 +58,20 @@ node <- dbReadTable(db, "node") %>%
 
 raw_dat <- raw_dat %>% 
   left_join(node) %>% 
-  arrange(row, col, date_time)
+  arrange(row, col, date_time) 
+
+dis_rr <- raw_dat %>% 
+  select(node_id, row, col, id, variety) %>% 
+  distinct() %>% 
+  arrange(row, col, node_id) %>% 
+  group_by(row, col) %>% 
+  mutate(t_num = 1:n())
+
+dis_rr %>% 
+  filter(t_num == 2) %>% 
+  ggplot(aes(row, col))+
+  geom_tile(colour = "black")+
+  geom_text(aes(label = variety))
 
 ## Change output filename to whatever suits you
 ## When you run it again make sure you change the name so that you are not overwriting
